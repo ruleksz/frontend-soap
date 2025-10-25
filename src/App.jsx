@@ -1,28 +1,23 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Dashboard from "./pages/admin/Dashboard";
+import Members from "./pages/admin/Members";
+import DashboardMember from "./pages/member/DasboardMember";
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Navbar di atas */}
-      <Navbar />
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
 
-      {/* Konten utama */}
-      <main className="flex-1 bg-gray-50">
-        <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </main>
+      {/* Admin Routes */}
+      <Route path="/admin/dashboard" element={<Dashboard />} />
+      <Route path="/admin/add-member" element={<Members />} />
 
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white text-center py-4">
-        Capstone Project - Marketing Dashboard © 2024
-      </footer>
-    </div>
+      {/* Member Routes */}
+      <Route path="/member/dashboard-member" element={<DashboardMember />} />
+    </Routes>
   );
 }
 

@@ -1,33 +1,31 @@
-// ✅ Import gambar dari folder assets
-import gambar1Image from "../assets/gambar1.jpg";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
+
   return (
-    <section className="w-full">
-      {/* Hero Section */}
-      <div
-        className="relative bg-cover bg-center h-[70vh]"
-        style={{
-          backgroundImage: `url(${gambar1Image})`,
-        }}
-      >
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4">*/
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            HOLLA...........
-          </h1>
-          
-          <div className="bg-white rounded-full p-2 w-full max-w-xl flex items-center shadow-md">
-            <input
-              type="text"
-              placeholder="What are you looking for?"
-              className="flex-1 px-4 py-2 rounded-full outline-none text-gray-700"
-            />
-            <button className="bg-cyan-500 text-white px-6 py-2 rounded-full hover:bg-cyan-600">
-              Search
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+
+      {/* Bagian Konten Portfolio */}
+      <main className="flex-1 bg-gray-50 flex flex-col items-center justify-center px-6 py-12">
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          Selamat Datang di Portfolio Saya
+        </h1>
+        <p className="text-gray-600 max-w-xl text-center mb-8">
+          Ini adalah halaman portfolio yang berisi karya dan pengalaman saya.
+        </p>
+        <button
+          onClick={() => navigate("/login")}
+          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
+        >
+          Sign In
+        </button>
+      </main>
+
+      <Footer />
+    </div>
   );
 }
