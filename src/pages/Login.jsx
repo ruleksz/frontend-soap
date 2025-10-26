@@ -13,22 +13,31 @@ export default function Login() {
         setError("");
 
         try {
-            const res = await api.post("/admin/login", { email, password });
-            if (res.data.status === "success") {
+            // panggil endpoint login (yang memeriksa admin & member)
+            const res = await api.post("/auth/login", { email, password });
+
+            // jika berhasil
+            if (res.data && res.data.token) {
                 localStorage.setItem("token", res.data.token);
                 localStorage.setItem("user", JSON.stringify(res.data.user));
 
-                if (res.data.user.role === "admin") navigate("/admin/dashboard");
-                else navigate("/member/dashboard-member");
+                // redirect berdasarkan tabel asal (bukan role manual)
+                if (res.data.user.source === "admin") {
+                    navigate("/admin/dashboard");
+                } else if (res.data.user.source === "member") {
+                    navigate("/member/dashboard-member");
+                } else {
+                    setError("Sumber user tidak dikenali");
+                }
             } else {
-                setError(res.data.message);
+                setError(res.data.message || "Login gagal");
             }
         } catch (err) {
             console.error("Error saat login:", err);
-            setError("Terjadi kesalahan koneksi ke server");
+            setError(err.response?.data?.message || "Terjadi kesalahan koneksi ke server");
         }
-
     };
+
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
