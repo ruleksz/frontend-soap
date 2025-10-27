@@ -12,7 +12,7 @@ const DashboardAdmin = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await api.get("/admin/dashboard");
+        const res = await api.get("/dashboard");
         setStats(res.data);
       } catch (err) {
         console.error("Gagal mengambil data dashboard admin:", err);
