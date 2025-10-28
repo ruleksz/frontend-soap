@@ -4,7 +4,7 @@ import api from "../../api/apiClient";
 const DashboardMember = () => {
     const [data, setData] = useState({
         nama_member: "",
-        jumlah_proyek: 0,
+        projectCount: 0,
         jumlah_followup: 0,
         rate: 0,
     });
@@ -12,7 +12,7 @@ const DashboardMember = () => {
     useEffect(() => {
         const fetchMemberData = async () => {
             try {
-                const res = await api.get("/member/dashboard");
+                const res = await api.get("/member-dashboard");
                 setData(res.data);
             } catch (err) {
                 console.error("Gagal mengambil data dashboard member:", err);
@@ -30,7 +30,7 @@ const DashboardMember = () => {
 
             <div style={styles.cards}>
                 <div style={styles.card}>
-                    🏗️ <strong>Jumlah Proyek:</strong> {data.jumlah_proyek}
+                    🏗️ <strong>Jumlah Proyek:</strong> {data.projectCount}
                 </div>
                 <div style={styles.card}>
                     💬 <strong>Follow Up CRM:</strong> {data.jumlah_followup}
