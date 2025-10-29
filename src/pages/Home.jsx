@@ -104,7 +104,7 @@ export default function Home() {
 
               <div className="mt-4 flex gap-2">
                 <Link
-                  to={`/property/${p.id}`}
+                  to={`/properti/${p.id_properti}`}
                   className="flex-1 text-center bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
                 >
                   Lihat Detail

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
@@ -8,27 +8,36 @@ export default function Login() {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
+    // 🔒 Cegah user balik ke login jika sudah login
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+        if (token && user.source === "admin") {
+            navigate("/admin/dashboard", { replace: true });
+        }
+    }, [navigate]);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setError("");
 
         try {
-            // panggil endpoint login (yang memeriksa admin & member)
             const res = await api.post("/auth/login", { email, password });
 
-            // jika berhasil
-            if (res.data && res.data.token) {
+            if (res.data?.token) {
+                // Simpan token & user
                 localStorage.setItem("token", res.data.token);
                 localStorage.setItem("user", JSON.stringify(res.data.user));
 
-                // redirect berdasarkan tabel asal (bukan role manual)
-                if (res.data.user.source === "admin") {
-                    navigate("/admin/dashboard");
-                } else if (res.data.user.source === "member") {
-                    navigate("/member/dashboard-member");
-                } else {
-                    setError("Sumber user tidak dikenali");
-                }
+                // 🧹 Bersihkan history agar tombol "back" tidak bisa kembali ke login
+                window.history.pushState(null, "", window.location.href);
+                window.addEventListener("popstate", function () {
+                    window.history.pushState(null, "", window.location.href);
+                });
+
+                // Navigasi ke dashboard
+                navigate("/admin/dashboard", { replace: true });
             } else {
                 setError(res.data.message || "Login gagal");
             }
@@ -38,11 +47,10 @@ export default function Login() {
         }
     };
 
-
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-                <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+                <h2 className="text-2xl font-bold text-center mb-6">Login Admin</h2>
 
                 <form onSubmit={handleLogin} className="space-y-4">
                     <input
@@ -64,7 +72,10 @@ export default function Login() {
 
                     {error && <p className="text-red-500 text-center">{error}</p>}
 
-                    <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+                    >
                         Login
                     </button>
                 </form>
