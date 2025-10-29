@@ -7,7 +7,7 @@ export default function Navbar() {
     <nav className="bg-gradient-to-r from-cyan-500 to-orange-400 text-white px-6 py-4 flex justify-between items-center">
       <div className="flex items-center space-x-2">
         <img
-          src="../assets/hero.jpg"
+          src="../assets/logo.png"
           alt="Logo"
           className="w-8 h-8"
         />

@@ -54,12 +54,12 @@ export default function AdminLayout() {
     return (
         <div className="flex min-h-screen bg-gray-100">
             {/* Sidebar */}
-            <aside className="w-64 bg-blue-800 text-white flex flex-col">
+            <aside className="w-64 bg-white text-violet-600 flex flex-col">
                 <div className="p-6 text-center border-b border-blue-700">
-                    <h1 className="text-2xl font-bold">🏡 Admin Panel</h1>
-                    <p className="text-sm text-blue-200 mt-2">
-                        Selamat datang, <span className="font-semibold">{adminName}</span> 👋
-                    </p>
+                    <div className="flex flex-col justify-center items-center ">
+                        <img src="../../public/logo.png" alt="" className="w-22 h-22" />
+                        <h1 className="text-2xl font-bold">Admin Panel</h1>
+                    </div>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">
@@ -71,8 +71,8 @@ export default function AdminLayout() {
                                 to={item.path}
                                 className={({ isActive }) =>
                                     `flex items-center gap-3 px-4 py-2 rounded-lg transition ${isActive
-                                        ? "bg-blue-600 text-white shadow-md"
-                                        : "text-blue-100 hover:bg-blue-700"
+                                        ? "bg-violet-600 text-white shadow-md"
+                                        : "text-violet-600 hover:bg-violet-700 hover:text-white"
                                     }`
                                 }
                             >

@@ -13,7 +13,7 @@ export default function Sidebar() {
     ];
 
     return (
-        <aside className="fixed left-0 top-0 h-full w-64 bg-blue-900 text-white flex flex-col shadow-lg">
+        <aside className="fixed left-0 top-0 h-full w-64 bg-cyan-900 text-white flex flex-col shadow-lg">
             <div className="flex items-center gap-3 px-6 py-5 border-b border-blue-700">
                 <LayoutDashboard className="w-6 h-6" />
                 <h1 className="text-lg font-bold">Admin Panel</h1>
@@ -25,8 +25,8 @@ export default function Sidebar() {
                         key={menu.to}
                         to={menu.to}
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${location.pathname === menu.to
-                                ? "bg-blue-700 text-white font-semibold"
-                                : "text-blue-200 hover:bg-blue-800"
+                            ? "bg-cyan-700 text-white font-semibold"
+                            : "text-blue-200 hover:bg-cyan-800"
                             }`}
                     >
                         <div className="w-5 h-5">{menu.icon}</div>
