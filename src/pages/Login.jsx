@@ -13,9 +13,8 @@ export default function Login() {
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-        if (token && user.source === "admin") {
-            navigate("/admin/dashboard", { replace: true });
-        }
+        if (token && user.source === "admin")  navigate("/admin/dashboard", { replace: true });
+        if (token && user.source === "member")  navigate("/member/dashboard", { replace: true });
     }, [navigate]);
 
     const handleLogin = async (e) => {
@@ -37,7 +36,12 @@ export default function Login() {
                 });
 
                 // Navigasi ke dashboard
-                navigate("/admin/dashboard", { replace: true });
+                const role = res.data.user.source;
+                if (role === "admin") {
+                    navigate("/admin/dashboard", { replace: true });
+                } else if (role === "member") {
+                    navigate("/member/dashboard", { replace: true });
+                }
             } else {
                 setError(res.data.message || "Login gagal");
             }

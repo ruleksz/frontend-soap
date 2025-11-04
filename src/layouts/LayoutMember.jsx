@@ -8,19 +8,19 @@ import {
     LogOut,
 } from "lucide-react";
 
-export default function AdminLayout() {
+export default function LayoutMember() {
     const navigate = useNavigate();
-    const [adminName, setAdminName] = useState("");
+    const [memberName, setMemberName] = useState("");
 
-    // 🔒 Proteksi halaman admin
+    // 🔒 Proteksi halaman member
     useEffect(() => {
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-        if (!token || user.source !== "admin") {
+        if (!token || user.source !== "member") {
             navigate("/login", { replace: true });
         } else {
-            setAdminName(user.nama || "Admin");
+            setMemberName(user.nama || "Member");
         }
 
         // 🧹 Cegah tombol "Back" ke login
@@ -45,10 +45,10 @@ export default function AdminLayout() {
     };
 
     const menuItems = [
-        { name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
-        { name: "Data Member", path: "/admin/member", icon: Users },
-        { name: "Data Proyek", path: "/admin/proyek", icon: Building2 },
-        { name: "Data Properti", path: "/admin/properti", icon: Home },
+        { name: "Dashboard", path: "/member/dashboard", icon: LayoutDashboard },
+        { name: "Data Leads", path: "/member/leads", icon: Users },
+        { name: "Data Properti", path: "/member/properti", icon: Building2 },
+        { name: "Leader", path: "/member/leader", icon: Users },
     ];
 
     return (
@@ -56,9 +56,9 @@ export default function AdminLayout() {
             {/* Sidebar */}
             <aside className="w-64 bg-blue-800 text-white flex flex-col">
                 <div className="p-6 text-center border-b border-blue-700">
-                    <h1 className="text-2xl font-bold">🏡 Admin Panel</h1>
+                    <h1 className="text-2xl font-bold">🏡 Member Panel</h1>
                     <p className="text-sm text-blue-200 mt-2">
-                        Selamat datang, <span className="font-semibold">{adminName}</span> 👋
+                        Selamat datang, <span className="font-semibold">{memberName}</span> 👋
                     </p>
                 </div>
 
