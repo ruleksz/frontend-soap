@@ -47,7 +47,7 @@ export default function LayoutMember() {
     const menuItems = [
         { name: "Dashboard", path: "/member/dashboard", icon: LayoutDashboard },
         { name: "Data Leads", path: "/member/leads", icon: Users },
-        { name: "Data Properti", path: "/member/properti", icon: Building2 },
+        { name: "Data Properti", path: "/member/properti-saya", icon: Building2 },
         { name: "Leader", path: "/member/leader", icon: Users },
     ];
 
