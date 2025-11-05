@@ -4,13 +4,14 @@ import Login from "./pages/Login";
 import AdminLayout from "./layouts/AdminLayout";
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
 import MemberPage from "./pages/admin/MemberPage";
-import PropertyDetail from "./pages/PropertiDetail";
+import PropertyDetail from "./pages/PropertiDetail"; // ✅ untuk detail properti
 import ProtectedRoute from "./components/ProtectedRoute";
 import GuestRoute from "./components/GuestRoute";
 import LayoutMember from "./layouts/LayoutMember";
 import DashboardMember from "./pages/member/DashboardMember";
 import LeadsMember from "./pages/member/LeadsMember";
 import LeadsFormModal from "./components/LeadsFormModal";
+import PropertiSaya from "./pages/member/PropertiSaya";
 
 function App() {
   return (
@@ -53,8 +54,7 @@ function App() {
         }
       >
         <Route path="dashboard" element={<DashboardAdmin />} />
-        <Route path="member" element={<MemberPage />} />  {/* Tambahkan ini */}
-        {/* Tambahkan route admin lain di sini kalau ada */}
+        <Route path="member" element={<MemberPage />} />
       </Route>
 
       {/* Halaman Member hanya untuk user yang sudah login */}
@@ -68,8 +68,8 @@ function App() {
       >
         <Route path="dashboard" element={<DashboardMember />} />
         <Route path="leads" element={<LeadsMember />} />
-          {/* Tambahkan ini */}
-        {/* Tambahkan route admin lain di sini kalau ada */}
+        <Route path="properti-saya" element={<PropertiSaya />} />
+        <Route path="properti-saya/:id" element={<PropertyDetail />} /> {/* ✅ Detail properti member */}
       </Route>
 
       {/* Jika URL tidak dikenal, arahkan ke home */}
