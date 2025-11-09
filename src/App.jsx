@@ -12,6 +12,7 @@ import DashboardMember from "./pages/member/DashboardMember";
 import LeadsMember from "./pages/member/LeadsMember";
 import LeadsFormModal from "./components/LeadsFormModal";
 import PropertiSaya from "./pages/member/PropertiSaya";
+import PropertiAdmin from "./pages/admin/PropertiAdmin";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
       >
         <Route path="dashboard" element={<DashboardAdmin />} />
         <Route path="member" element={<MemberPage />} />
+        <Route path="properti" element={<PropertiAdmin />} />
       </Route>
 
       {/* Halaman Member hanya untuk user yang sudah login */}

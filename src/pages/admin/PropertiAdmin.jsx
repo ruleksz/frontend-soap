@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function PropertiSaya() {
+export default function PropertiAdmin() {
   const [propertiList, setPropertiList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -23,9 +23,30 @@ export default function PropertiSaya() {
         setLoading(false);
       }
     };
+    const handleAdd = () => {
+        setSelectedMember(null);
+        setIsModalOpen(true);
+    };
+
+    const handleEdit = (member) => {
+        setSelectedMember(member);
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("Yakin ingin menghapus member ini?")) return;
+        try {
+            await axios.delete(`http://localhost:5000/api/member/${id}`);
+            fetchMembers();
+        } catch (err) {
+            console.error("Gagal menghapus member:", err);
+        }
+    };
 
     fetchProperti();
   }, []);
+
+  
 
   if (loading)
     return <p className="text-center text-gray-500 mt-20">Memuat data properti...</p>;
@@ -35,7 +56,7 @@ export default function PropertiSaya() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Data Properti</h1>
+      
 
       {propertiList.length === 0 ? (
         <p className="text-gray-500">Belum ada data properti.</p>
@@ -68,7 +89,7 @@ export default function PropertiSaya() {
                   </td>
                   <td className="px-4 py-2 text-center">
                     <Link
-                      to={`/member/properti/${prop.id_properti}`}
+                      to={`/properti/${prop.id_properti}`}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
                     >
                       Lihat

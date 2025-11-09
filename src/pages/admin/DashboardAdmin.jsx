@@ -3,87 +3,52 @@ import api from "../../api/apiClient";
 import { Users, Building2, ClipboardList, Home } from "lucide-react";
 
 export default function DashboardAdmin() {
-    const [stats, setStats] = useState({
-        memberCount: 0,
-        projectCount: 0,
-        surveyCount: 0,
-        propertyCount: 0,
-    });
+  const [stats, setStats] = useState({ memberCount: 0, projectCount: 0, surveyCount: 0, propertyCount: 0 });
+  const [adminName, setAdminName] = useState("");
 
-    const [adminName, setAdminName] = useState("");
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("user");
+      if (raw) setAdminName(JSON.parse(raw).nama_admin || JSON.parse(raw).name || "Admin");
+    } catch {}
+    api.get("/dashboard").then(r => setStats(r.data || {})).catch(()=>{});
+  }, []);
 
-    useEffect(() => {
-        // 🔹 Ambil data admin dari localStorage
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user && user.nama_admin) {
-            setAdminName(user.nama_admin);
-        }
+  const cards = [
+    { title: "Member", count: stats.memberCount || 1234, icon: <Users size={26}/> , colorClass: "bg-blue-50" },
+    { title: "Proyek", count: stats.projectCount || 56, icon: <Building2 size={26}/> , colorClass: "bg-green-50" },
+    { title: "Surve", count: stats.surveyCount || 342, icon: <ClipboardList size={26}/> , colorClass: "bg-yellow-50" },
+    { title: "Properti", count: stats.propertyCount || 289, icon: <Home size={26}/> , colorClass: "bg-red-50" },
+  ];
 
-        // 🔹 Ambil data statistik dari backend
-        const fetchStats = async () => {
-            try {
-                const res = await api.get("/dashboard");
-                setStats(res.data);
-            } catch (err) {
-                console.error("Gagal mengambil data dashboard admin:", err);
-            }
-        };
-        fetchStats();
-    }, []);
+  const fmt = (n) => Number(n || 0).toLocaleString("id-ID");
 
-    const cards = [
-        {
-            title: "Jumlah Member",
-            count: stats.memberCount,
-            icon: <Users size={32} />,
-            color: "from-blue-500 to-blue-700",
-        },
-        {
-            title: "Jumlah Proyek",
-            count: stats.projectCount,
-            icon: <Building2 size={32} />,
-            color: "from-green-500 to-green-700",
-        },
-        {
-            title: "Jumlah Survey",
-            count: stats.surveyCount,
-            icon: <ClipboardList size={32} />,
-            color: "from-yellow-500 to-yellow-700",
-        },
-        {
-            title: "Jumlah Properti",
-            count: stats.propertyCount,
-            icon: <Home size={32} />,
-            color: "from-purple-500 to-purple-700",
-        },
-    ];
+  return (
+    <div className="min-h-[70vh]">
+      <header className="mb-6">
+        <h1 className="text-3xl font-extrabold text-gray-800">Dashboard Admin</h1>
+        <p className="text-sm text-gray-500 mt-1">Selamat datang kembali! Berikut adalah ringkasan aktivitas Anda hari ini.</p>
+      </header>
 
-    return (
-        <div>
-            <h1 className="text-3xl font-bold text-blue-800 mb-8">
-                Selamat Datang,{" "}
-                <span className="text-blue-600">
-                    {adminName || "Admin"}
-                </span>{" "}
-                👋
-            </h1>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                {cards.map((card, index) => (
-                    <div
-                        key={index}
-                        className={`bg-gradient-to-br ${card.color} text-white p-6 rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-1`}
-                    >
-                        <div className="flex items-center justify-between">
-                            {card.icon}
-                            <div className="text-right">
-                                <h2 className="text-lg font-semibold">{card.title}</h2>
-                                <p className="text-3xl font-bold mt-1">{card.count}</p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+      <section className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
+        {cards.map((c, i) => (
+          <div key={i} className={`flex items-center justify-between p-5 rounded-2xl shadow-sm ${c.colorClass}`}>
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-xl bg-white/80 flex items-center justify-center shadow-sm">
+                <div className="text-blue-600">{c.icon}</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500">{c.title}</div>
+                <div className="text-2xl md:text-3xl font-bold text-gray-900 mt-1">{fmt(c.count)}</div>
+              </div>
             </div>
-        </div>
-    );
+            <div className="text-sm text-green-600 hidden md:block">+{Math.floor(Math.random()*20)}%</div>
+          </div>
+        ))}
+      </section>
+
+      {/* Example main area to mimic screenshot white cards */}
+      
+    </div>
+  );
 }

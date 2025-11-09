@@ -10,6 +10,14 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // untuk leads
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProperti, setSelectedProperti] = useState(null);
+  const [leadName, setLeadName] = useState("");
+  const [leadKontak, setLeadKontak] = useState("");
+  const [sending, setSending] = useState(false);
+  const [success, setSuccess] = useState(false);
+
   // ✅ Ambil data dari backend saat komponen pertama kali dimuat
   useEffect(() => {
     const fetchProperties = async () => {
@@ -34,6 +42,54 @@ export default function Home() {
   }, []);
 
 
+  const handleSendLead = async (e) => {
+    e.preventDefault();
+    if (!leadName || !leadKontak) return;
+
+    setSending(true);
+    try {
+      const payload = {
+        nama_cabuy: leadName,
+        kontak: leadKontak,
+        status: "Baru", // sesuai controller lama
+        tanggal_follow_up: new Date(),
+        tanggal_masuk: new Date(),
+      };
+
+      const response = await fetch("http://localhost:5000/api/cabuy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("Gagal mengirim data leads");
+      setSuccess(true);
+
+      // 🟢 Arahkan ke WhatsApp member (gunakan no_hp dari properti)
+      setTimeout(() => {
+        const waNumber = selectedProperti?.Member?.no_hp || "628123456789";
+        window.open(
+          `https://wa.me/${waNumber}?text=Halo,%20saya%20${encodeURIComponent(
+            leadName
+          )}%20tertarik%20dengan%20properti%20${encodeURIComponent(
+            selectedProperti?.nama_properti || "ini"
+          )}`,
+          "_blank"
+        );
+        setShowModal(false);
+        setLeadName("");
+        setLeadKontak("");
+        setSuccess(false);
+      }, 1000);
+    } catch (err) {
+      console.error("❌ Error kirim leads:", err);
+      alert("Gagal mengirim data leads. Pastikan server backend berjalan.");
+    } finally {
+      setSending(false);
+    }
+  };
+
+
   return (
     <section className="w-full min-h-screen bg-gray-50">
       <Navbar />
@@ -41,16 +97,12 @@ export default function Home() {
       {/* ✅ Hero Section */}
       <div
         className="relative bg-cover bg-center h-[70vh]"
-        style={{
-          backgroundImage: `url(${gambar1Image})`,
-        }}
+        style={{ backgroundImage: `url(${gambar1Image})` }}
       >
         <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center text-white px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">
             Temukan Properti Impianmu 🔑
           </h1>
-
-          {/* 🔍 Search Bar */}
           <div className="bg-white rounded-full p-2 w-full max-w-xl flex items-center shadow-md">
             <input
               type="text"
@@ -70,14 +122,8 @@ export default function Home() {
           Daftar Properti Unggulan
         </h2>
 
-        {loading && (
-          <p className="text-center text-gray-500">Memuat data properti...</p>
-        )}
-
-        {error && (
-          <p className="text-center text-red-500">{error}</p>
-        )}
-
+        {loading && <p className="text-center text-gray-500">Memuat data properti...</p>}
+        {error && <p className="text-center text-red-500">{error}</p>}
         {!loading && !error && properti.length === 0 && (
           <p className="text-center text-gray-500">Belum ada properti tersedia.</p>
         )}
@@ -92,15 +138,11 @@ export default function Home() {
                 src={p.image || "/no-image.jpg"}
                 alt={p.nama_properti}
                 className="h-40 w-full object-cover rounded-lg mb-3"
-
               />
-
               <h3 className="text-lg font-semibold text-gray-800">{p.nama_properti}</h3>
               <p className="text-sm text-gray-500">{p.location}</p>
               <p className="text-blue-700 font-bold mt-1">{p.price}</p>
-              <p className="text-sm text-gray-600 mt-1 flex-grow">
-                {p.deskripsi}
-              </p>
+              <p className="text-sm text-gray-600 mt-1 flex-grow">{p.deskripsi}</p>
 
               <div className="mt-4 flex gap-2">
                 <Link
@@ -109,17 +151,80 @@ export default function Home() {
                 >
                   Lihat Detail
                 </Link>
-                <Link
-                  to="/lead/form"
+                {/* 🆕 Ganti tombol ini jadi popup leads */}
+                <button
+                  onClick={() => {
+                    setSelectedProperti(p);
+                    setShowModal(true);
+                  }}
                   className="flex-1 text-center border border-blue-600 text-blue-600 py-2 rounded hover:bg-blue-50"
                 >
                   Saya Tertarik
-                </Link>
+                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* 🆕 Modal Leads */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 className="text-xl font-semibold mb-4 text-gray-700">
+              Tertarik dengan {selectedProperti?.nama_properti}?
+            </h3>
+
+            {!success ? (
+              <form onSubmit={handleSendLead} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600">Nama</label>
+                  <input
+                    type="text"
+                    value={leadName}
+                    onChange={(e) => setLeadName(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:ring focus:ring-blue-200"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600">
+                    Nomor WhatsApp
+                  </label>
+                  <input
+                    type="text"
+                    value={leadKontak}
+                    onChange={(e) => setLeadKontak(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:ring focus:ring-blue-200"
+                    required
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={sending}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    {sending ? "Mengirim..." : "Kirim"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <p className="text-green-600 text-center font-medium mt-4">
+                Data berhasil dikirim! 🚀
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ✅ CTA Section */}
       <div className="bg-gradient-to-r from-cyan-500 to-orange-400 py-12 text-center text-white">
