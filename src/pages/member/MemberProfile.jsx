@@ -27,7 +27,7 @@ export default function MemberProfile() {
                     jabatan: userData.jabatan || "Member",
                     leader_id: userData.leader_id || "-",
                     email: userData.email || "-",
-                    password: userData.password || "-",
+                    password: userData.password || "********",
                 };
                 setMemberData(newData);
                 setEditData(newData);
@@ -61,7 +61,6 @@ export default function MemberProfile() {
             <div className="space-y-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-3">
                 <InfoCard icon={<FolderPen className="text-red-600" />} label="Nama" value={memberData.nama_member} />
                 <InfoCard icon={<Phone className="text-red-600" />} label="Kontak" value={memberData.kontak} />
-                <InfoCard icon={<Hash className="text-red-600" />} label="ID Admin" value={memberData.id_admin} />
                 <InfoCard icon={<Shield className="text-red-600" />} label="Jabatan" value={memberData.jabatan} />
                 <InfoCard icon={<Hash className="text-red-600" />} label="Leader ID" value={memberData.leader_id} />
                 <InfoCard icon={<Mail className="text-red-600" />} label="Email" value={memberData.email} />

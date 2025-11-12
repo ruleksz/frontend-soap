@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../api/apiClient";
-import NotificationModal from "./NotificationModal"; // 🟢 Tambahkan ini
+import NotificationModal from "./NotificationModal";
 
 function formatDateForInput(value) {
   if (!value) return "";
@@ -14,32 +14,27 @@ function formatDateForInput(value) {
 }
 
 export default function LeadsFormModal({ onClose, onSaved, cabuy }) {
-  const [members, setMembers] = useState([]);
   const [formData, setFormData] = useState({
-    id_member: "",
     nama_cabuy: cabuy?.nama_cabuy || "",
     kontak: cabuy?.kontak || "",
     tanggal_follow_up: cabuy?.tanggal_follow_up ? formatDateForInput(cabuy.tanggal_follow_up) : "",
     tanggal_masuk: cabuy?.tanggal_masuk ? formatDateForInput(cabuy.tanggal_masuk) : "",
     status: cabuy?.status || "Baru",
   });
+
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
-
-  // 🟢 State tambahan untuk notif modal
   const [notif, setNotif] = useState({ show: false, message: "", type: "success" });
 
+  // 🧠 Ambil member dari localStorage
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const id_member = currentUser?.id_member;
+
   useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const res = await api.get("/member");
-        setMembers(Array.isArray(res.data) ? res.data : []);
-      } catch (err) {
-        console.warn("Gagal memuat daftar member:", err?.response?.data || err.message || err);
-      }
-    };
-    fetchMembers();
-  }, []);
+    if (!id_member) {
+      console.warn("⚠️ Tidak ada id_member di localStorage. Pastikan login menyimpan user!");
+    }
+  }, [id_member]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,8 +50,13 @@ export default function LeadsFormModal({ onClose, onSaved, cabuy }) {
       return;
     }
 
+    if (!id_member) {
+      setErrorMsg("ID Member tidak ditemukan. Harap login ulang!");
+      return;
+    }
+
     const payload = {
-      id_member: formData.id_member || null,
+      id_member, // otomatis dari login
       nama_cabuy: formData.nama_cabuy,
       kontak: formData.kontak,
       status: formData.status || "Baru",
@@ -149,38 +149,19 @@ export default function LeadsFormModal({ onClose, onSaved, cabuy }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold mb-1">Status</label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg p-2"
-                >
-                  <option value="Baru">Baru</option>
-                  <option value="Follow Up">Follow Up</option>
-                  <option value="Closing">Closing</option>
-                  <option value="Lost">Lost</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-1">Assigned Agent</label>
-                <select
-                  name="id_member"
-                  value={formData.id_member ?? ""}
-                  onChange={handleChange}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg p-2"
-                >
-                  <option value="">— Pilih Agent —</option>
-                  {members.map((member) => (
-                    <option key={member.id_member} value={member.id_member}>
-                      {member.nama_member}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1">Status</label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg p-2"
+              >
+                <option value="Baru">Baru</option>
+                <option value="Follow Up">Follow Up</option>
+                <option value="Closing">Closing</option>
+                <option value="Lost">Lost</option>
+              </select>
             </div>
 
             {errorMsg && <div className="text-sm text-red-500 font-medium">{errorMsg}</div>}
@@ -205,7 +186,7 @@ export default function LeadsFormModal({ onClose, onSaved, cabuy }) {
         </div>
       </div>
 
-      {/* 🟢 Notifikasi muncul di tengah layar */}
+      {/* 🟢 Modal Notifikasi */}
       <NotificationModal
         show={notif.show}
         message={notif.message}

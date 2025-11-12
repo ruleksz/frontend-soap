@@ -3,7 +3,7 @@ import api from "../../api/apiClient";
 import { Users, Building2, ClipboardList, Home } from "lucide-react";
 
 export default function DashboardMember() {
-  const [stats, setStats] = useState({ leadsCount: 0, projectCount: 0, surveyCount: 0, propertyCount: 0 });
+  const [stats, setStats] = useState({ cabuysCount: 0, projectCount: 0, surveyCount: 0, propertyCount: 0 });
   const [memberName, setMemberName] = useState("");
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function DashboardMember() {
   }, []);
 
   const cards = [
-    { title: "Leads", count: stats.leadsCount || 1234, icon: <Users size={55} strokeWidth={2.5} />, colorClass: "bg-gray-900" },
+    { title: "Leads", count: stats.cabuysCount || 1234, icon: <Users size={55} strokeWidth={2.5} />, colorClass: "bg-gray-900" },
     { title: "Proyek", count: stats.projectCount || 56, icon: <Building2 size={55} strokeWidth={2.5} />, colorClass: "bg-gray-900" },
     { title: "Surve", count: stats.surveyCount || 342, icon: <ClipboardList size={55} strokeWidth={2.5} />, colorClass: "bg-gray-900" },
     { title: "Properti", count: stats.propertyCount || 289, icon: <Home size={55} strokeWidth={2.5} />, colorClass: "bg-gray-900" },
